@@ -27,6 +27,12 @@
 | TRAP-13 | E02 迟到撤下 | 收件顺序末态错误 | 标迟到后按生效回放 | `app/modules/replay/radio.py` | `tests/test_replay.py::test_late_offload_before_reload` |
 | TRAP-14 | E12 同键相反动作 | 后写覆盖 | 全组隔离 | `app/modules/scans/service.py` | `tests/test_scans.py::test_conflicting_id` |
 | TRAP-23 | E04 恰逢跨日换窗 | 同时匹配两段 | 左闭右开 | `app/modules/legs/service.py` | `tests/test_legs.py::test_boundary_handoff` |
+| TRAP-31 | 停飞后晚到撤下落入续飞窗口 | 误归续飞段或窗外漏撤 | 凭原航段装机凭据回放，标 `OUTSIDE_REPLAY`，续飞装机仍按窗归属 | `app/modules/legs/service.py` | `tests/test_handover.py::test_late_offload_replays_to_original_leg_during_continuation_window` |
+| TRAP-32 | 清单外已装件未撤即交接 | 舱里有人也放行 | 逐航段清舱结论，清单外未撤与待证一并阻断 | `app/modules/ledger/handover.py` | `tests/test_handover.py::test_handover_blocked_by_unlisted_loaded_bag` |
+
+## 清舱交接
+
+每个航段给出 `可交接 / 不可交接`。阻断条件：该段清单件仍有 `pending` 待证，或清单外行李在该段末态仍为 `LOADED`（一件未撤即不可交接）。错装件按实际所在航段核算，不阻断原航段。归档结论随原件摘要固化，重跑走唯一键复用，不覆盖原结论。
 
 ## 对账规则
 

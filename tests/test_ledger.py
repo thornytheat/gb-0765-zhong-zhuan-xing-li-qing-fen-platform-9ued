@@ -15,8 +15,25 @@ def test_leg_subtotals(dirty):
     assert sum(r['manifest'] for r in dirty['ledger']['rows']) == 12
 
 
+def test_dirty_clearance_handover(dirty):
+    handover = dirty['ledger']['handover']
+    assert (handover['ready'], handover['blocked']) == (1, 4)
+    assert not handover['all_ready']
+    jl08 = next(row for row in handover['rows'] if row['leg'] == 'JL-08')
+    assert jl08['status'] == 'BLOCKED'
+    # 清单外已装件 009999 一件未撤，单独阻断 JL-08
+    assert [b['tag'] for b in jl08['blockers'] if b['kind'] == 'UNLISTED'] == ['009999']
+    hx42 = next(row for row in handover['rows'] if row['leg'] == 'HX-42')
+    assert hx42['status'] == 'READY'
+
+
+def test_dirty_association_keeps_window_field(dirty):
+    assert all('window' in row for row in dirty['legs']['rows'])
+    assert {row['window'] for row in dirty['legs']['rows']} == {'IN_WINDOW'}
+
+
 def test_scan_disagreement_blocks_balance(dirty):
-    assert not reconcile(dirty['exceptions'], {}, {'balanced': False})['balanced']
+    assert not reconcile(dirty['exceptions'], {}, {'balanced': False}, [])['balanced']
 
 
 def test_default_stage(desk):

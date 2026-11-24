@@ -6,4 +6,6 @@ REASONS = {
     'NO_LOAD': '缺少计划航段装载证据', 'OFFLOADED': '计划航段末态为撤下',
     'WRONG_LEG': '非计划航段末态为装载', 'MULTI_LOADED': '多个航段同时保持装载',
     'UNLISTED': '行李牌未出现在中转清单', 'UNCERTAIN': '存在未决扫描证据',
+    'UNLISTED_LOADED': '清单外已装件仍未撤下，阻断清舱交接',
+    'OUTSIDE_REPLAY': '窗外晚到撤下，凭原航段凭据回放归属',
 }
